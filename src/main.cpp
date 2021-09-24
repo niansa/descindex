@@ -32,13 +32,28 @@ desc read_desc_file(const std::string& path) {
     return fres;
 }
 
+void handle_media_file(const std::filesystem::path& media_file, const desc& media_desc) {
+    // Open output file for writing
+    std::ofstream output(media_file.string()+"_preview.html");
+    // Write out doctype
+    output << Template::doctype;
+    // Write out top
+    output << fmt::format(Template::Preview::top, media_desc.title, media_desc.description);
+    // Write out content
+    output << fmt::format(Template::Preview::content, media_file.filename().string());
+    // Write out bottom
+    output << Template::Preview::bottom;
+}
+
 desc handle_media_dir(const std::filesystem::path& media_dir) {
     // Open output file for writing
     std::ofstream output(media_dir/"index.html");
     // Get directory description
     auto media_dir_desc = read_desc_file(media_dir/"desc.txt");
+    // Write out doctype
+    output << Template::doctype;
     // Write out top
-    output << fmt::format(Template::top, media_dir_desc.title, media_dir_desc.description);
+    output << fmt::format(Template::Listing::top, media_dir_desc.title, media_dir_desc.description);
     // Iterate through input dir
     for (const auto& file : std::filesystem::directory_iterator(media_dir)) {
         // Skip .html and .txt files
@@ -48,18 +63,22 @@ desc handle_media_dir(const std::filesystem::path& media_dir) {
         }
         // Get description
         desc file_desc;
+        std::string_view content_template;
         if (file.is_directory()) {
             // Handle directory
             file_desc = handle_media_dir(file);
+            content_template = Template::Listing::content_dir;
         } else {
             // Handle file
             file_desc = read_desc_file(file.path().string()+".txt");
+            handle_media_file(file.path(), file_desc);
+            content_template = Template::Listing::content_file;
         }
         // Write out entry
-        output << fmt::format(Template::content, file_desc.title, file_desc.description, file.path().filename().string());
+        output << fmt::format(content_template, file_desc.title, file_desc.description, file.path().filename().string());
     }
     // Write out bottom
-    output << Template::bottom;
+    output << Template::Listing::bottom;
     // Return description of directory
     return media_dir_desc;
 }
