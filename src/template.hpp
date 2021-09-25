@@ -48,7 +48,7 @@ top = R"(
         <title>{0} - Preview</title>
     </head>
     <body>
-        <p><a href="..">Leave preview</a></p>
+        <p><a href=".">Leave preview</a></p>
         <h1>{0}</h1>
         <p>{1}</p>
         <br />
