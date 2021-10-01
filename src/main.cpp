@@ -56,9 +56,9 @@ desc handle_media_dir(const std::filesystem::path& media_dir) {
     output << fmt::format(Template::Listing::top, media_dir_desc.title, media_dir_desc.description);
     // Iterate through input dir
     for (const auto& file : std::filesystem::directory_iterator(media_dir)) {
-        // Skip .html and .txt files
+        // Skip some file types
         auto ext = file.path().extension();
-        if (ext == ".html" || ext == ".txt") {
+        if (ext == ".html" || ext == ".txt" || ext == ".sig") {
             continue;
         }
         // Get description
