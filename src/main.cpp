@@ -49,7 +49,7 @@ desc handle_media_dir(const std::filesystem::path& media_dir) {
     // Open output file for writing
     std::ofstream output(media_dir/"index.html");
     // Get directory description
-    auto media_dir_desc = read_desc_file(media_dir/"desc.txt");
+    auto media_dir_desc = read_desc_file((media_dir/"desc.txt").string());
     // Write out doctype
     output << Template::doctype;
     // Write out top
